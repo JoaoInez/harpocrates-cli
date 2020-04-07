@@ -1,0 +1,23 @@
+{
+  "name": "harpocrates-cli",
+  "version": "1.0.0",
+  "description": "Some description",
+  "main": "./cmds/harpocrates.js",
+  "bin": {
+    "harpocrates": "./cmds/harpocrates.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.0.0",
+    "commander": "^5.0.0",
+    "conf": "^6.2.3",
+    "cryptr": "^6.0.2",
+    "prompts": "^2.3.2",
+    "signale": "^1.4.0"
+  }
+}

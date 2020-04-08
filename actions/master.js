@@ -1,54 +1,23 @@
-const prompts = require("prompts");
 const signale = require("signale");
-const chalk = require("chalk");
 const fs = require("fs");
-const { initConf, confPath } = require("../lib/secretManager");
-
-exports.set = async () => {
-  const path = confPath();
-
-  if (fs.existsSync(path)) {
-    signale.fatal("Found a secrets file in this computer!");
-    signale.info(
-      `If you want to change your master key run ${chalk.blue(
-        "$ harpocrates master change"
-      )}`
-    );
-    return signale.info(
-      `If you want to delete the current secrets file and set a new master key run ${chalk.blue(
-        "$ harpocrates master delete"
-      )} and ${chalk.blue("$ harporcrates master set")}`
-    );
-  }
-
-  const { masterKey } = await prompts({
-    type: "password",
-    name: "masterKey",
-    message: "Type your master key",
-    validate: (value) => (value === "" ? "Cannot be empty" : true),
-  });
-
-  if (!masterKey) {
-    return signale.fatal("Aborted!");
-  }
-
-  const { confirmMasterKey } = await prompts({
-    type: "password",
-    name: "confirmMasterKey",
-    message: "Confirm your master key",
-    validate: (value) =>
-      value !== masterKey ? "Master keys don't match" : true,
-  });
-
-  if (!confirmMasterKey) {
-    return signale.fatal("Aborted!");
-  }
-
-  initConf(masterKey);
-
-  signale.success("Master key set!");
-};
+const { confPath } = require("../lib/secretsManager");
+const { auth } = require("../utils/auth");
+const prompts = require("../utils/prompts");
+const { confirmQ } = require("../utils/questions");
+const { signaleAbort } = require("../utils/signales");
 
 exports.change = () => {};
 
-exports.remove = () => {};
+exports.remove = auth(async () => {
+  if (!fs.existsSync(confPath()))
+    return signale.fatal("Didn't find a secrets file in this computer!");
+
+  signale.warn("This will delete your secrets file!");
+  const { confirm, __cancelled__ } = await prompts(confirmQ);
+
+  if (__cancelled__ || !confirm) return signaleAbort();
+
+  fs.unlinkSync(confPath());
+
+  signale.success("Secrets file deleted!");
+});

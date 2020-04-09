@@ -31,7 +31,5 @@ exports.auth = (f) => async (...args) => {
     if (!checkSecrets(masterKey)) return signale.fatal("Incorrect master key!");
 
     f(masterKey, ...args);
-  } else {
-    f(prefsMasterKey, ...args);
-  }
+  } else f(prefsMasterKey, ...args);
 };

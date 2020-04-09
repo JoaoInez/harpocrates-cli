@@ -1,5 +1,5 @@
 const { program } = require("commander");
-const { set, get } = require("../actions/secret");
+const { set, get, list } = require("../actions/secret");
 
 program
   .command("set <name>")
@@ -7,8 +7,10 @@ program
   .action(set);
 
 program
-  .command("get <name>")
-  .description("get secret named <name>")
+  .command("get [name]")
+  .description("get secret named [name]")
   .action(get);
+
+program.command("list").description("list all secret names").action(list);
 
 program.parse(process.argv);

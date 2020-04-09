@@ -31,7 +31,7 @@ module.exports = auth(async (masterKey, { defaults }) => {
       secretSetType,
       copyToClipboard,
     });
-  } else {
-    initConf();
-  }
+  } else initConf();
+
+  signale.success("Preferences changed!");
 });

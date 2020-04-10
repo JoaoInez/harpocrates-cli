@@ -23,14 +23,12 @@ exports.confirmMasterKeyQ = (masterKey, message) => ({
   validate: noMatch(masterKey, message),
 });
 
-exports.rememberMasterKeyQ = [
-  {
-    type: "confirm",
-    name: "prefsMasterKey",
-    message: "Remember master key?",
-    initial: false,
-  },
-];
+exports.rememberMasterKeyQ = {
+  type: "confirm",
+  name: "prefsMasterKey",
+  message: "Remember master key?",
+  initial: false,
+};
 
 exports.secretsPrefsQs = [
   {
@@ -81,34 +79,37 @@ exports.secretsPrefsQs = [
   },
 ];
 
-exports.confirmQ = [
-  {
-    type: "confirm",
-    name: "confirm",
-    message: "Are you sure?",
-    initial: false,
-  },
-];
+exports.confirmQ = {
+  type: "confirm",
+  name: "confirm",
+  message: "Are you sure?",
+  initial: false,
+};
 
-exports.setSecretQ = [
-  {
-    type: getSecretSetType,
-    name: "secret",
-    message: "Tell me a secret",
-    validate: notEmpty,
-  },
-];
+exports.setSecretQ = {
+  type: getSecretSetType,
+  name: "secret",
+  message: "Tell me a secret",
+  validate: notEmpty,
+};
 
-exports.getSecretAutocompleteQ = (masterKey) => [
-  {
-    type: "autocomplete",
-    name: "secret",
-    message: "Pick the secret",
-    choices: Object.entries(getAllSecrets(masterKey).secrets).map(
-      ([key, value]) => ({
-        title: key,
-        value,
-      })
-    ),
-  },
-];
+exports.getSecretAutocompleteQ = (masterKey) => ({
+  type: "autocomplete",
+  name: "secret",
+  message: "Pick the secret",
+  choices: Object.entries(getAllSecrets(masterKey).secrets).map(
+    ([key, value]) => ({
+      title: key,
+      value,
+    })
+  ),
+});
+
+exports.deleteSecretAutocompleteQ = (masterKey) => ({
+  type: "autocomplete",
+  name: "secret",
+  message: "Pick the secret",
+  choices: Object.keys(getAllSecrets(masterKey).secrets).map((secret) => ({
+    title: secret,
+  })),
+});

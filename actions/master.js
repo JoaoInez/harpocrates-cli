@@ -6,7 +6,7 @@ const prompts = require("../utils/prompts");
 const { confirmQ } = require("../utils/questions");
 const { signaleAbort } = require("../utils/signales");
 
-exports.change = () => {};
+exports.change = () => {}; //TODO
 
 exports.remove = auth(async () => {
   if (!fs.existsSync(confPath()))

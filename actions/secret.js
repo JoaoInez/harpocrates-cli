@@ -4,12 +4,19 @@ const clipboardy = require("clipboardy");
 const {
   setSecret,
   getSecret,
+  deleteSecret,
   getAllSecrets,
+  hasSecret,
 } = require("../lib/secretsManager");
 const { getSecretViewPrefs } = require("../lib/prefsManager");
 const { auth } = require("../utils/auth");
 const prompts = require("../utils/prompts");
-const { setSecretQ, getSecretAutocompleteQ } = require("../utils/questions");
+const {
+  setSecretQ,
+  getSecretAutocompleteQ,
+  confirmQ,
+  deleteSecretAutocompleteQ,
+} = require("../utils/questions");
 const { signaleAbort } = require("../utils/signales");
 
 exports.set = auth(async (masterKey, name) => {
@@ -43,6 +50,26 @@ exports.get = auth(async (masterKey, name) => {
   if (secretViewMode === "invisible")
     signale.success(chalk.bgBlack.black.hidden(secret));
 });
+
+exports.remove = auth(async (masterKey, name) => {
+  const { secret, __cancelled__: __secret__ } = name
+    ? { secret: name }
+    : await prompts(deleteSecretAutocompleteQ(masterKey));
+
+  if (__secret__) return signaleAbort();
+  if (!hasSecret(secret)(masterKey)) return signale.fatal("No secret found!");
+
+  signale.warn(`You are about to delete ${secret}`);
+  const { confirm, __cancelled__: __confirm__ } = await prompts(confirmQ);
+
+  if (__confirm__) return signaleAbort();
+  if (!confirm) return;
+
+  deleteSecret(secret)(masterKey);
+  signale.success("Secret deleted!");
+});
+
+exports.change = auth((masterKey) => {}); //TODO
 
 exports.list = auth((masterKey) => {
   const { secrets } = getAllSecrets(masterKey);

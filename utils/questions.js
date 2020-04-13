@@ -16,6 +16,13 @@ exports.typeMasterKeyQ = {
   validate: notEmpty,
 };
 
+exports.newMasterKeyQ = {
+  type: "password",
+  name: "masterKey",
+  message: "Type your new master key",
+  validate: notEmpty,
+};
+
 exports.confirmMasterKeyQ = (masterKey, message) => ({
   type: "password",
   name: "confirmMasterKey",

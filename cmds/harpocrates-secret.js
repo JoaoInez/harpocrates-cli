@@ -1,5 +1,5 @@
 const { program } = require("commander");
-const { set, get, list, remove } = require("../actions/secret");
+const { set, get, list, remove, change } = require("../actions/secret");
 
 program
   .command("set <name>")
@@ -15,6 +15,11 @@ program
   .command("delete [name]")
   .description("delete secret named [name]")
   .action(remove);
+
+program
+  .command("change <oldName> <newName>")
+  .description("change secret <oldName> to <newName>")
+  .action(change);
 
 program.command("list").description("list all secret names").action(list);
 

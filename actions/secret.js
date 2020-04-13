@@ -69,7 +69,15 @@ exports.remove = auth(async (masterKey, name) => {
   signale.success("Secret deleted!");
 });
 
-exports.change = auth((masterKey) => {}); //TODO
+exports.change = auth((masterKey, oldName, newName) => {
+  const secret = getSecret(oldName)(masterKey);
+
+  if (!secret) return signale.fatal("No secret found!");
+
+  setSecret(newName, secret)(masterKey);
+  deleteSecret(oldName)(masterKey);
+  signale.success("Secret changed!");
+});
 
 exports.list = auth((masterKey) => {
   const { secrets } = getAllSecrets(masterKey);

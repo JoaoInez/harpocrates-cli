@@ -1,6 +1,6 @@
 const signale = require("signale");
 const { initConf } = require("../lib/prefsManager");
-const { auth } = require("../utils/auth");
+const auth = require("../utils/auth");
 const prompts = require("../utils/prompts");
 const { rememberMasterKeyQ, secretsPrefsQs } = require("../utils/questions");
 const { signaleAbort } = require("../utils/signales");

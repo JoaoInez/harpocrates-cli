@@ -1,8 +1,8 @@
-const signale = require("signale");
 const fs = require("fs");
+const signale = require("signale");
 const { confPath, getAllSecrets, setConf } = require("../lib/secretsManager");
 const { getMasterKey, setMasterKey } = require("../lib/prefsManager");
-const { auth } = require("../utils/auth");
+const auth = require("../utils/auth");
 const prompts = require("../utils/prompts");
 const {
   confirmQ,

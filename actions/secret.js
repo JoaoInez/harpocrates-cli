@@ -9,7 +9,7 @@ const {
   hasSecret,
 } = require("../lib/secretsManager");
 const { getSecretViewPrefs } = require("../lib/prefsManager");
-const { auth } = require("../utils/auth");
+const auth = require("../utils/auth");
 const prompts = require("../utils/prompts");
 const {
   setSecretQ,
@@ -80,6 +80,9 @@ exports.change = auth((masterKey, oldName, newName) => {
 });
 
 exports.list = auth((masterKey) => {
-  const { secrets } = getAllSecrets(masterKey);
-  Object.keys(secrets).map((secret) => signale.success(secret));
+  const secrets = Object.keys(getAllSecrets(masterKey).secrets);
+
+  if (!secrets.length) return signale.warn("You have no secrets");
+
+  secrets.map((secret) => signale.success(secret));
 });

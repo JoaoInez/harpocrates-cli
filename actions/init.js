@@ -1,5 +1,3 @@
-const signale = require("signale");
-const chalk = require("chalk");
 const fs = require("fs");
 const {
   initConf: initSecrets,
@@ -13,38 +11,26 @@ const {
   rememberMasterKeyQ,
   secretsPrefsQs,
 } = require("../utils/questions");
-const { signaleAbort, signaleFatal } = require("../utils/signales");
+const { warning, success } = require("../utils/signales");
+const errorHandler = require("../utils/errorHandler");
 
 module.exports = async ({ defaults }) => {
   try {
     const path = secretsPath();
 
-    if (fs.existsSync(path)) {
-      signale.fatal("Found a secrets file in this computer!");
-      signale.info(
-        `If you want to change your master key run ${chalk.blue(
-          "$ harpocrates master change"
-        )}`
-      );
-      signale.info(
-        `If you want to delete the current secrets file and set a new master key run ${chalk.blue(
-          "$ harpocrates master delete"
-        )} and ${chalk.blue("$ harporcrates init")}`
-      );
-      return;
-    }
+    if (fs.existsSync(path)) throw new Error("SECRETS_FILE_ALREADY_EXISTS");
 
     const { masterKey, __cancelled__: __masterKey__ } = await prompts(
       typeMasterKeyQ
     );
 
-    if (__masterKey__) return signaleAbort();
+    if (__masterKey__) throw new Error("ABORT");
 
     const { __cancelled__: __confirmMasterKey__ } = await prompts(
       confirmMasterKeyQ(masterKey, "Master keys don't match")
     );
 
-    if (__confirmMasterKey__) return signaleAbort();
+    if (__confirmMasterKey__) throw new Error("ABORT");
 
     initSecrets(masterKey);
     initPrefs();
@@ -57,17 +43,15 @@ module.exports = async ({ defaults }) => {
         __cancelled__: __secretPrefs__,
       } = await prompts(secretsPrefsQs);
 
-      if (__secretPrefs__) return signaleAbort();
+      if (__secretPrefs__) throw new Error("ABORT");
 
-      signale.warn(
-        "For more security remembering the master key is not recommended"
-      );
+      warning.rememberMasterKey();
       const {
         prefsMasterKey,
         __cancelled__: __prefsMasterKey__,
       } = await prompts(rememberMasterKeyQ);
 
-      if (__prefsMasterKey__) return signaleAbort();
+      if (__prefsMasterKey__) throw new Error("ABORT");
 
       initPrefs({
         masterKey: prefsMasterKey ? masterKey : false,
@@ -77,8 +61,8 @@ module.exports = async ({ defaults }) => {
       });
     }
 
-    signale.success("Harpocrates initialized!");
+    success.harpocratesInitialized();
   } catch (error) {
-    signaleFatal();
+    errorHandler(error);
   }
 };

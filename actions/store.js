@@ -1,4 +1,3 @@
-const signale = require("signale");
 const { appendFileSync, readFileSync } = require("../lib/fileManager");
 const {
   getAllSecrets,
@@ -8,6 +7,7 @@ const {
 } = require("../lib/secretsManager");
 const { encrypt, decrypt } = require("../lib/cryptrManager");
 const auth = require("../utils/auth");
+const { success } = require("../utils/signales");
 
 //TODO: backup and import with json
 
@@ -20,7 +20,7 @@ exports.backup = auth(
 
     appendFileSync(`${folderPath}/${filename}.txt`, data);
 
-    signale.success("Secrets backed up!");
+    success.secretsBackedUp();
   }
 );
 
@@ -32,7 +32,7 @@ exports.importStore = auth(
       : JSON.parse(decrypt(data)(encryptionKey || masterKey));
 
     if (!secrets.hasOwnProperty("secrets"))
-      return signale.fatal("File is incompatible!");
+      throw new Error("FILE_INCOMPATIBLE");
 
     if (!replace) {
       Object.entries(secrets.secrets).forEach(([key, value]) => {
@@ -42,6 +42,6 @@ exports.importStore = auth(
       });
     } else setConf(masterKey, secrets);
 
-    signale.success("Secrets imported!");
+    success.secretsBackedUp();
   }
 );

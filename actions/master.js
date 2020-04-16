@@ -1,5 +1,4 @@
 const fs = require("fs");
-const signale = require("signale");
 const { confPath, getAllSecrets, setConf } = require("../lib/secretsManager");
 const { getMasterKey, setMasterKey } = require("../lib/prefsManager");
 const auth = require("../utils/auth");
@@ -9,20 +8,20 @@ const {
   newMasterKeyQ,
   confirmMasterKeyQ,
 } = require("../utils/questions");
-const { signaleAbort } = require("../utils/signales");
+const { warning, success } = require("../utils/signales");
 
 exports.change = auth(async (oldMasterKey) => {
   const { masterKey, __cancelled__: __masterKey__ } = await prompts(
     newMasterKeyQ
   );
 
-  if (__masterKey__) return signaleAbort();
+  if (__masterKey__) throw new Error("ABORT");
 
   const { __cancelled__: __confirmMasterKey__ } = await prompts(
     confirmMasterKeyQ(masterKey, "Master keys don't match")
   );
 
-  if (__confirmMasterKey__) return signaleAbort();
+  if (__confirmMasterKey__) throw new Error("ABORT");
 
   const store = getAllSecrets(oldMasterKey);
   const prefsMasterKey = getMasterKey();
@@ -31,19 +30,19 @@ exports.change = auth(async (oldMasterKey) => {
 
   if (prefsMasterKey) setMasterKey(masterKey);
 
-  signale.success("Master key changed!");
+  success.masterKeyChanged();
 });
 
 exports.remove = auth(async () => {
-  if (!fs.existsSync(confPath()))
-    return signale.fatal("Didn't find a secrets file in this computer!");
+  if (!fs.existsSync(confPath())) throw new Error("NO_SECRETS_FILE_FOUND");
 
-  signale.warn("This will delete your secrets file!");
+  warning.deleteSecretsFile();
   const { confirm, __cancelled__ } = await prompts(confirmQ);
 
-  if (__cancelled__ || !confirm) return signaleAbort();
+  if (__cancelled__) throw new Error("ABORT");
+  if (!confirm) return;
 
   fs.unlinkSync(confPath());
 
-  signale.success("Secrets file deleted!");
+  success.secretsFileDeleted();
 });

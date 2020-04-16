@@ -1,9 +1,8 @@
-const signale = require("signale");
 const { initConf } = require("../lib/prefsManager");
 const auth = require("../utils/auth");
 const prompts = require("../utils/prompts");
 const { rememberMasterKeyQ, secretsPrefsQs } = require("../utils/questions");
-const { signaleAbort } = require("../utils/signales");
+const { warning, success } = require("../utils/signales");
 
 module.exports = auth(async (masterKey, { defaults }) => {
   if (!defaults) {
@@ -14,16 +13,14 @@ module.exports = auth(async (masterKey, { defaults }) => {
       __cancelled__: __secretPrefs__,
     } = await prompts(secretsPrefsQs);
 
-    if (__secretPrefs__) return signaleAbort();
+    if (__secretPrefs__) throw new Error("ABORT");
 
-    signale.warn(
-      "For more security remembering the master key is not recommended"
-    );
+    warning.rememberMasterKey();
     const { prefsMasterKey, __cancelled__: __prefsMasterKey__ } = await prompts(
       rememberMasterKeyQ
     );
 
-    if (__prefsMasterKey__) return signaleAbort();
+    if (__prefsMasterKey__) throw new Error("ABORT");
 
     initConf({
       masterKey: prefsMasterKey ? masterKey : false,
@@ -33,5 +30,5 @@ module.exports = auth(async (masterKey, { defaults }) => {
     });
   } else initConf();
 
-  signale.success("Preferences changed!");
+  success.prefsChanged();
 });

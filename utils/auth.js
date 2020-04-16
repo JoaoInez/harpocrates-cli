@@ -1,5 +1,4 @@
 const fs = require("fs");
-const signale = require("signale");
 const {
   confPath: secretsPath,
   checkConf: checkSecrets,
@@ -11,16 +10,11 @@ const {
 } = require("../lib/prefsManager");
 const prompts = require("./prompts");
 const { enterMasterKeyQ } = require("./questions");
-const { signaleAbort, signaleFatal } = require("./signales");
+const errorHandler = require("./errorHandler");
 
 module.exports = (f) => async (...args) => {
-  //TODO: replace trycatch with errorHandler high order function
   try {
-    if (!fs.existsSync(secretsPath())) {
-      signale.fatal("No master key found!");
-      signale.info("Run $ harpocrates init to create one.");
-      return;
-    }
+    if (!fs.existsSync(secretsPath())) throw new Error("NO_MASTER_KEY");
 
     if (!fs.existsSync(prefsPath())) initConf();
 
@@ -29,14 +23,12 @@ module.exports = (f) => async (...args) => {
     if (!prefsMasterKey) {
       const { masterKey, __cancelled__ } = await prompts(enterMasterKeyQ);
 
-      if (__cancelled__) return signaleAbort();
-      if (!checkSecrets(masterKey))
-        return signale.fatal("Incorrect master key!");
+      if (__cancelled__) throw new Error("ABORT");
+      if (!checkSecrets(masterKey)) throw new Error("INCORRECT_MASTER_KEY");
 
       f(masterKey, ...args);
     } else f(prefsMasterKey, ...args);
   } catch (error) {
-    console.log(error);
-    signaleFatal();
+    errorHandler(error);
   }
 };

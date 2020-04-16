@@ -26,8 +26,8 @@ module.exports = (f) => async (...args) => {
       if (__cancelled__) throw new Error("ABORT");
       if (!checkSecrets(masterKey)) throw new Error("INCORRECT_MASTER_KEY");
 
-      f(masterKey, ...args);
-    } else f(prefsMasterKey, ...args);
+      f(masterKey, ...args).catch(errorHandler);
+    } else f(prefsMasterKey, ...args).catch(errorHandler);
   } catch (error) {
     errorHandler(error);
   }

@@ -45,6 +45,10 @@ module.exports = {
       );
       signale.info("Run harpocrates prefs to change one of these settings.");
     },
+    cannotViewSecrets: () => {
+      signale.warn("Secret view mode is set to none!");
+      signale.info("Run harpocrates prefs to change this setting.");
+    },
     confirmDeleteSecret: (secret) =>
       signale.warn(`You are about to delete ${secret}`),
   },

@@ -10,38 +10,71 @@ const { getSecretViewPrefs } = require("../lib/prefsManager");
 const auth = require("../utils/auth");
 const prompts = require("../utils/prompts");
 const {
+  setSecretNameQ,
+  setSecretNameAutocompleteQ,
   setSecretQ,
   getSecretAutocompleteQ,
+  getMultipleSecretsAutocompleteQ,
   confirmQ,
   deleteSecretAutocompleteQ,
+  changeSecretAutocompleteQ,
+  setNewSecretNameQ,
 } = require("../utils/questions");
 const { warning, success } = require("../utils/signales");
 
-// TODO: more options for get, set and list
+// TODO: combine prompts to avoid unnecessary ifs
 
-exports.set = auth(async (masterKey, name) => {
-  const { secret, __cancelled__ } = await prompts(setSecretQ);
+exports.set = auth(async (masterKey, name, secret, { search }) => {
+  const { name: _name, __cancelled__: __name__ } = name
+    ? { name }
+    : search
+    ? await prompts(setSecretNameAutocompleteQ(masterKey))
+    : await prompts(setSecretNameQ);
 
-  if (__cancelled__) throw new Error("ABORT");
+  if (__name__) throw new Error("ABORT");
+  if (!_name) throw new Error("NO_SECRET_FOUND");
 
-  setSecret(name, secret)(masterKey);
+  const { secret: _secret, __cancelled__: __secret__ } = secret
+    ? { secret }
+    : await prompts(setSecretQ);
+
+  if (__secret__) throw new Error("ABORT");
+
+  setSecret(_name, _secret)(masterKey);
 
   success.secretSet();
 });
 
-exports.get = auth(async (masterKey, name) => {
-  const { secret } = name
-    ? { secret: getSecret(name)(masterKey) }
-    : await prompts(getSecretAutocompleteQ(masterKey));
-
-  if (!secret) throw new Error("NO_SECRET_FOUND");
-
+exports.get = auth(async (masterKey, name, { multiple }) => {
   const { secretViewMode, copyToClipboard } = getSecretViewPrefs();
 
-  if (secretViewMode === "none" && !copyToClipboard) warning.cannotViewSecret();
-  if (copyToClipboard) clipboardy.writeSync(secret);
-  if (secretViewMode === "visible") success.showSecret(secret);
-  if (secretViewMode === "invisible") success.showSecret(secret, true);
+  if (!multiple) {
+    const { secret, __cancelled__ } = name
+      ? { secret: getSecret(name)(masterKey) }
+      : await prompts(getSecretAutocompleteQ(masterKey));
+
+    if (__cancelled__) throw new Error("ABORT");
+    if (!secret) throw new Error("NO_SECRET_FOUND");
+    if (secretViewMode === "none" && !copyToClipboard)
+      warning.cannotViewSecret();
+    if (copyToClipboard) clipboardy.writeSync(secret);
+    if (secretViewMode === "visible") success.showSecret(secret);
+    if (secretViewMode === "invisible") success.showSecret(secret, true);
+  } else {
+    const { secrets, __cancelled__ } = await prompts(
+      getMultipleSecretsAutocompleteQ(masterKey)
+    );
+
+    if (__cancelled__) throw new Error("ABORT");
+    if (secretViewMode === "none") warning.cannotViewSecrets();
+
+    secrets.forEach(({ name, secret }) => {
+      if (secretViewMode === "visible")
+        success.showSecret(`${name} -> ${secret}`);
+      if (secretViewMode === "invisible")
+        success.showSecret(`${name} -> ${secret}`, true);
+    });
+  }
 });
 
 exports.remove = auth(async (masterKey, name) => {
@@ -62,20 +95,34 @@ exports.remove = auth(async (masterKey, name) => {
   success.secretDeleted();
 });
 
-exports.change = auth((masterKey, oldName, newName) => {
-  const secret = getSecret(oldName)(masterKey);
+exports.change = auth(async (masterKey, oldName, newName) => {
+  const { oldName: _oldName, __cancelled__: __oldName__ } = oldName
+    ? { oldName }
+    : await prompts(changeSecretAutocompleteQ(masterKey));
+
+  if (__oldName__) throw new Error("ABORT");
+
+  const secret = getSecret(_oldName)(masterKey);
 
   if (!secret) throw new Error("NO_SECRET_FOUND");
 
-  setSecret(newName, secret)(masterKey);
-  deleteSecret(oldName)(masterKey);
+  const { newName: _newName, __cancelled__: __newName__ } = newName
+    ? { newName }
+    : await prompts(setNewSecretNameQ);
+
+  if (__newName__) throw new Error("ABORT");
+
+  setSecret(_newName, secret)(masterKey);
+  deleteSecret(_oldName)(masterKey);
   success.secretChanged();
 });
 
-exports.list = auth((masterKey) => {
-  const secrets = Object.keys(getAllSecrets(masterKey).secrets);
+exports.list = auth(async (masterKey, { showSecrets }) => {
+  const secrets = Object.entries(getAllSecrets(masterKey).secrets);
 
   if (!secrets.length) throw new Error("NO_SECRETS");
 
-  secrets.map((secret) => success.showSecret(secret));
+  secrets.map(([name, secret]) =>
+    success.showSecret(!showSecrets ? secret : `${name} -> ${secret}`)
+  );
 });

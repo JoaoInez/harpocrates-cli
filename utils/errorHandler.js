@@ -15,7 +15,9 @@ const errors = {
   DECRYPT_FAILED: error.decryptFailed,
 };
 
-module.exports = ({ message }) => {
+module.exports = (error) => {
+  const { message } = error;
+  console.log(error);
   if (errors.hasOwnProperty(message)) errors[message]();
   else errors.FATAL();
 };

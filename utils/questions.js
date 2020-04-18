@@ -2,6 +2,8 @@ const { getSecretSetType } = require("../lib/prefsManager");
 const { getAllSecrets } = require("../lib/secretsManager");
 const { notEmpty, noMatch } = require("./validation");
 
+//TODO: maybe combine similar questions into functions
+
 exports.enterMasterKeyQ = {
   type: "invisible",
   name: "masterKey",
@@ -64,12 +66,12 @@ exports.secretsPrefsQs = [
     message: "Default secret typing mode",
     choices: [
       {
-        title: "password",
-        value: "password",
-      },
-      {
         title: "text",
         value: "text",
+      },
+      {
+        title: "password",
+        value: "password",
       },
       {
         title: "invisible",
@@ -93,6 +95,22 @@ exports.confirmQ = {
   initial: false,
 };
 
+exports.setSecretNameQ = {
+  type: "text",
+  name: "name",
+  message: "What is the secret's name:",
+  validate: notEmpty,
+};
+
+exports.setSecretNameAutocompleteQ = (masterKey) => ({
+  type: "autocomplete",
+  name: "name",
+  message: "Pick the secret",
+  choices: Object.keys(getAllSecrets(masterKey).secrets).map((secret) => ({
+    title: secret,
+  })),
+});
+
 exports.setSecretQ = {
   type: getSecretSetType,
   name: "secret",
@@ -112,6 +130,20 @@ exports.getSecretAutocompleteQ = (masterKey) => ({
   ),
 });
 
+exports.getMultipleSecretsAutocompleteQ = (masterKey) => ({
+  type: "multiselect",
+  name: "secrets",
+  message: "Pick the secrets",
+  choices: Object.entries(getAllSecrets(masterKey).secrets).map(
+    ([key, value]) => ({
+      title: key,
+      value: { name: key, secret: value },
+    })
+  ),
+  min: 1,
+  instructions: false,
+});
+
 exports.deleteSecretAutocompleteQ = (masterKey) => ({
   type: "autocomplete",
   name: "secret",
@@ -120,3 +152,19 @@ exports.deleteSecretAutocompleteQ = (masterKey) => ({
     title: secret,
   })),
 });
+
+exports.changeSecretAutocompleteQ = (masterKey) => ({
+  type: "autocomplete",
+  name: "oldName",
+  message: "Pick the secret",
+  choices: Object.keys(getAllSecrets(masterKey).secrets).map((secret) => ({
+    title: secret,
+  })),
+});
+
+exports.setNewSecretNameQ = {
+  type: "text",
+  name: "newName",
+  message: "Enter new secret name:",
+  validate: notEmpty,
+};

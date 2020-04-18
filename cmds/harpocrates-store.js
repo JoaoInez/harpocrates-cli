@@ -5,7 +5,7 @@ program
   .command("backup <filename> <folderPath>")
   .option("-d, --decrypted", "backups up decrypted file", false)
   .option(
-    "-ek, --encryptionKey <key>",
+    "-ek, -k, --encryptionKey <key>",
     "encryption key for file. Defaults to master key",
     ""
   )
@@ -15,7 +15,7 @@ program
   .command("import <filePath>")
   .option("-d, --decrypted", "imports decrypted file", false)
   .option(
-    "-ek, --encryptionKey <key>",
+    "-ek, -k, --encryptionKey <key>",
     "encryption key for file. Defaults to master key",
     ""
   )
@@ -25,7 +25,7 @@ program
     false
   )
   .option("-r, --replace", "replaces secrets with file", false)
-  .description("backs up secrets to <filename> in <folderPath>")
+  .description("imports secrets from <filePath>")
   .action(importStore);
 
 program.parse(process.argv);

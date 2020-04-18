@@ -1,4 +1,4 @@
-const { appendFileSync, readFileSync } = require("../lib/fileManager");
+const { writeFileSync, readFileSync } = require("../lib/fileManager");
 const {
   getAllSecrets,
   setConf,
@@ -9,23 +9,28 @@ const { encrypt, decrypt } = require("../lib/cryptrManager");
 const auth = require("../utils/auth");
 const { success } = require("../utils/signales");
 
-//TODO: backup and import with json
-
 exports.backup = auth(
-  (masterKey, filename, folderPath, { decrypted, encryptionKey }) => {
+  async (masterKey, filename, folderPath, { decrypted, encryptionKey }) => {
     const secrets = getAllSecrets(masterKey);
     const data = decrypted
       ? JSON.stringify(secrets)
       : encrypt(JSON.stringify(secrets))(encryptionKey || masterKey);
 
-    appendFileSync(`${folderPath}/${filename}.txt`, data);
+    writeFileSync(
+      `${folderPath}/${filename}.${!decrypted ? "txt" : "json"}`,
+      data
+    );
 
     success.secretsBackedUp();
   }
 );
 
 exports.importStore = auth(
-  (masterKey, filePath, { decrypted, encryptionKey, override, replace }) => {
+  async (
+    masterKey,
+    filePath,
+    { decrypted, encryptionKey, override, replace }
+  ) => {
     const data = readFileSync(filePath, "utf8");
     const secrets = decrypted
       ? JSON.parse(data)

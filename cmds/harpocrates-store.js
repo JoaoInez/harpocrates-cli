@@ -6,7 +6,7 @@ program
   .option("-d, --decrypted", "backups up decrypted file", false)
   .option(
     "-ek, -k, --encryptionKey <key>",
-    "encryption key for file. Defaults to master key",
+    "encryption key for file (defaults to master key)",
     ""
   )
   .description("backs up secrets to <filename> in <folderPath>")
@@ -16,7 +16,7 @@ program
   .option("-d, --decrypted", "imports decrypted file", false)
   .option(
     "-ek, -k, --encryptionKey <key>",
-    "encryption key for file. Defaults to master key",
+    "encryption key for file (defaults to master key)",
     ""
   )
   .option(

@@ -17,7 +17,7 @@ program
   .description("change harpocrates preferences")
   .option("-d, --defaults", "use defaults", false)
   .action(prefs);
-program.command("secret", "manage secrets");
+program.command("secret", "manage secrets").alias("s");
 program.command("store", "manage store");
 
 program.parse(process.argv);

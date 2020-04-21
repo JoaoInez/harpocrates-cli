@@ -1,7 +1,8 @@
 {
   "name": "harpocrates-cli",
   "version": "1.0.0",
-  "description": "Some description",
+  "description": "Harpocrates let's you manage secrets like passwords or info you don't want anyone to see locally",
+  "repository": "JoaoInez/harpocrates-cli",
   "main": "./cmds/harpocrates.js",
   "bin": {
     "harpocrates": "./cmds/harpocrates.js"
@@ -10,7 +11,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Joao Inez",
   "license": "ISC",
   "dependencies": {
     "chalk": "^4.0.0",
@@ -19,7 +20,6 @@
     "conf": "^6.2.3",
     "cryptr": "^6.0.2",
     "prompts": "^2.3.2",
-    "ramda": "^0.27.0",
     "signale": "^1.4.0"
   }
 }

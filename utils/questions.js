@@ -2,8 +2,6 @@ const { getSecretSetType } = require("../lib/prefsManager");
 const { getAllSecrets } = require("../lib/secretsManager");
 const { notEmpty, noMatch } = require("./validation");
 
-//TODO: maybe combine similar questions into functions
-
 exports.enterMasterKeyQ = {
   type: "invisible",
   name: "masterKey",
@@ -25,11 +23,11 @@ exports.newMasterKeyQ = {
   validate: notEmpty,
 };
 
-exports.confirmMasterKeyQ = (masterKey, message) => ({
+exports.confirmMasterKeyQ = (masterKey) => ({
   type: "password",
   name: "confirmMasterKey",
   message: "Confirm your master key",
-  validate: noMatch(masterKey, message),
+  validate: noMatch(masterKey, "Master keys don't match"),
 });
 
 exports.rememberMasterKeyQ = {

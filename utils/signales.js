@@ -8,23 +8,21 @@ module.exports = {
     secretsFileAlreadyExists: () => {
       signale.fatal("Found a secrets file in this computer!");
       signale.info(
-        `If you want to change your master key run ${chalk.blue(
+        `If you want to change your master key run ${chalk.green(
           "$ harpocrates master change"
         )}`
       );
       signale.info(
-        `If you want to delete the current secrets file and set a new master key run ${chalk.blue(
+        `If you want to delete the current secrets file and set a new master key run ${chalk.green(
           "$ harpocrates master delete"
-        )} and ${chalk.blue("$ harpocrates init")}`
+        )} and ${chalk.green("$ harpocrates init")}`
       );
     },
     noMasterKey: () => {
       signale.fatal("No master key found!");
-      signale.info("Run $ harpocrates init to create one.");
+      signale.info(`Run ${chalk.green("$ harpocrates init")} to create one.`);
     },
     incorrectMasterKey: () => signale.fatal("Incorrect master key!"),
-    noSecretsFileFound: () =>
-      signale.fatal("Didn't find a secrets file in this computer!"),
     noSecretFound: () => signale.fatal("No secret found!"),
     noSecrets: () => signale.fatal("You have no secrets"),
     fileIncompatible: () => signale.fatal("File is incompatible!"),
@@ -43,11 +41,17 @@ module.exports = {
       signale.warn(
         "Secret view mode is set to none and copy to clipboard is set to false!"
       );
-      signale.info("Run harpocrates prefs to change one of these settings.");
+      signale.info(
+        `Run ${chalk.green(
+          "$ harpocrates prefs"
+        )} to change one of these settings.`
+      );
     },
     cannotViewSecrets: () => {
       signale.warn("Secret view mode is set to none!");
-      signale.info("Run harpocrates prefs to change this setting.");
+      signale.info(
+        `Run ${chalk.green("$ harpocrates prefs")} to change this setting.`
+      );
     },
     confirmDeleteSecret: (secret) =>
       signale.warn(`You are about to delete ${secret}`),

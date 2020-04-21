@@ -18,7 +18,7 @@ exports.change = auth(async (oldMasterKey) => {
   if (__masterKey__) throw new Error("ABORT");
 
   const { __cancelled__: __confirmMasterKey__ } = await prompts(
-    confirmMasterKeyQ(masterKey, "Master keys don't match")
+    confirmMasterKeyQ(masterKey)
   );
 
   if (__confirmMasterKey__) throw new Error("ABORT");
@@ -34,8 +34,6 @@ exports.change = auth(async (oldMasterKey) => {
 });
 
 exports.remove = auth(async () => {
-  if (!fs.existsSync(confPath())) throw new Error("NO_SECRETS_FILE_FOUND");
-
   warning.deleteSecretsFile();
   const { confirm, __cancelled__ } = await prompts(confirmQ);
 

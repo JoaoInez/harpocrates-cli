@@ -6,7 +6,6 @@ const errors = {
   SECRETS_FILE_ALREADY_EXISTS: error.secretsFileAlreadyExists,
   NO_MASTER_KEY: error.noMasterKey,
   INCORRECT_MASTER_KEY: error.incorrectMasterKey,
-  NO_SECRETS_FILE_FOUND: error.noSecretsFileFound,
   NO_SECRET_FOUND: error.noSecretFound,
   NO_SECRETS: error.noSecrets,
   FILE_INCOMPATIBLE: error.fileIncompatible,
@@ -15,9 +14,7 @@ const errors = {
   DECRYPT_FAILED: error.decryptFailed,
 };
 
-module.exports = (error) => {
-  const { message } = error;
-  console.log(error);
+module.exports = ({ message }) => {
   if (errors.hasOwnProperty(message)) errors[message]();
   else errors.FATAL();
 };

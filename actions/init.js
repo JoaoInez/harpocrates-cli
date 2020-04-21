@@ -27,7 +27,7 @@ module.exports = async ({ defaults }) => {
     if (__masterKey__) throw new Error("ABORT");
 
     const { __cancelled__: __confirmMasterKey__ } = await prompts(
-      confirmMasterKeyQ(masterKey, "Master keys don't match")
+      confirmMasterKeyQ(masterKey)
     );
 
     if (__confirmMasterKey__) throw new Error("ABORT");

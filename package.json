@@ -1,6 +1,6 @@
 {
   "name": "harpocrates-cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Harpocrates let's you manage secrets like passwords or info you don't want anyone to see locally",
   "repository": "JoaoInez/harpocrates-cli",
   "main": "./cmds/harpocrates.js",

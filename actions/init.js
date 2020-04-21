@@ -18,6 +18,8 @@ module.exports = async ({ defaults }) => {
   try {
     const path = secretsPath();
 
+    console.log(path);
+
     if (fs.existsSync(path)) throw new Error("SECRETS_FILE_ALREADY_EXISTS");
 
     const { masterKey, __cancelled__: __masterKey__ } = await prompts(

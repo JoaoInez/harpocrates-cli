@@ -3,4 +3,6 @@ const { confPath } = require("../lib/prefsManager");
 
 const path = confPath().replace("prefs.json", "");
 
-path && fs.rmdirSync(path, { recursive: true });
+try {
+  path && fs.rmdirSync(path, { recursive: true });
+} catch (error) {}

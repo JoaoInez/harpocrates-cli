@@ -8,7 +8,7 @@
     "harpocrates": "./cmds/harpocrates.js"
   },
   "scripts": {
-    "uninstall": "scripts/uninstall.js",
+    "uninstall": "node scripts/uninstall.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

@@ -2,14 +2,14 @@ const { program } = require("commander");
 const { backup, importStore } = require("../actions/store");
 
 program
-  .command("backup <filename> <folderPath>")
+  .command("backup <folderPath> [filename]")
   .option("-d, --decrypted", "backups up decrypted file", false)
   .option(
     "-ek, -k, --encryptionKey <key>",
     "encryption key for file (defaults to master key)",
     ""
   )
-  .description("backs up secrets to <filename> in <folderPath>")
+  .description("backs up secrets to <folderPath>/[filename]")
   .action(backup);
 program
   .command("import <filePath>")
@@ -21,7 +21,7 @@ program
   )
   .option(
     "-o, --override",
-    "overrides existing secrets with backup secrets",
+    "in case of conflit a secret is overwritten by the backup secret",
     false
   )
   .option("-r, --replace", "replaces secrets with file", false)

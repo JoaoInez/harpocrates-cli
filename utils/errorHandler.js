@@ -15,6 +15,7 @@ const errors = {
 };
 
 module.exports = ({ message }) => {
+  console.log(message);
   if (errors.hasOwnProperty(message)) errors[message]();
   else errors.FATAL();
 };

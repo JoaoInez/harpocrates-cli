@@ -4,6 +4,7 @@ const { set, get, list, remove, change } = require("../actions/secret");
 program
   .command("set [name] [secret]")
   .option("-s, --search", "search for an existing secret", false)
+  .option("-gen, --gen-password", "generate password", false)
   .description("set secret [secret] named [name]")
   .action(set);
 

@@ -70,5 +70,9 @@ module.exports = {
       hidden
         ? signale.success(chalk.bgBlack.black.hidden(secret))
         : signale.success(secret),
+    showGeneratedPassword: (password) =>
+      signale.success(`Generated password: ${password}`),
+    secretCopiedToClipboard: () =>
+      signale.success("Secret copied to clipboard!"),
   },
 };

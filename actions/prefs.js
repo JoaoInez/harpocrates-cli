@@ -1,7 +1,11 @@
 const { initConf } = require("../lib/prefsManager");
 const auth = require("../utils/auth");
 const prompts = require("../utils/prompts");
-const { rememberMasterKeyQ, secretsPrefsQs } = require("../utils/questions");
+const {
+  rememberMasterKeyQ,
+  secretsPrefsQs,
+  genPasswordPrefsQ,
+} = require("../utils/questions");
 const { warning, success } = require("../utils/signales");
 
 module.exports = auth(async (masterKey, { defaults }) => {
@@ -15,6 +19,20 @@ module.exports = auth(async (masterKey, { defaults }) => {
 
     if (__secretPrefs__) throw new Error("ABORT");
 
+    const {
+      length,
+      numbers,
+      symbols,
+      lowercase,
+      uppercase,
+      excludeSimilarCharacters,
+      exclude,
+      strict,
+      __cancelled__: __genPasswordPrefs__,
+    } = await prompts(genPasswordPrefsQ);
+
+    if (__genPasswordPrefs__) throw new Error("ABORT");
+
     warning.rememberMasterKey();
     const { prefsMasterKey, __cancelled__: __prefsMasterKey__ } = await prompts(
       rememberMasterKeyQ
@@ -27,6 +45,14 @@ module.exports = auth(async (masterKey, { defaults }) => {
       secretViewMode,
       secretSetType,
       copyToClipboard,
+      length,
+      numbers,
+      symbols,
+      lowercase,
+      uppercase,
+      excludeSimilarCharacters,
+      exclude,
+      strict,
     });
   } else initConf();
 

@@ -86,6 +86,58 @@ exports.secretsPrefsQs = [
   },
 ];
 
+exports.genPasswordPrefsQ = [
+  {
+    type: "number",
+    name: "length",
+    message: "Password length",
+    initial: 16,
+    style: "default",
+  },
+  {
+    type: "confirm",
+    name: "numbers",
+    message: "Put numbers in password?",
+    initial: true,
+  },
+  {
+    type: "confirm",
+    name: "symbols",
+    message: "Put symbols in password?",
+    initial: true,
+  },
+  {
+    type: "confirm",
+    name: "lowercase",
+    message: "Put lowercase in password?",
+    initial: true,
+  },
+  {
+    type: "confirm",
+    name: "uppercase",
+    message: "Put uppercase in password?",
+    initial: true,
+  },
+  {
+    type: "confirm",
+    name: "excludeSimilarCharacters",
+    message: `Exclude similar characters? (Example: "i" and "l")`,
+    initial: false,
+  },
+  {
+    type: "text",
+    name: "exclude",
+    message: "Characters to be exluded",
+    initial: "",
+  },
+  {
+    type: "confirm",
+    name: "strict",
+    message: "Password must include at least one character from each pool",
+    initial: true,
+  },
+];
+
 exports.confirmQ = {
   type: "confirm",
   name: "confirm",

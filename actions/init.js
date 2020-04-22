@@ -10,6 +10,7 @@ const {
   confirmMasterKeyQ,
   rememberMasterKeyQ,
   secretsPrefsQs,
+  genPasswordPrefsQ,
 } = require("../utils/questions");
 const { warning, success } = require("../utils/signales");
 const errorHandler = require("../utils/errorHandler");
@@ -17,8 +18,6 @@ const errorHandler = require("../utils/errorHandler");
 module.exports = async ({ defaults }) => {
   try {
     const path = secretsPath();
-
-    console.log(path);
 
     if (fs.existsSync(path)) throw new Error("SECRETS_FILE_ALREADY_EXISTS");
 
@@ -47,6 +46,20 @@ module.exports = async ({ defaults }) => {
 
       if (__secretPrefs__) throw new Error("ABORT");
 
+      const {
+        length,
+        numbers,
+        symbols,
+        lowercase,
+        uppercase,
+        excludeSimilarCharacters,
+        exclude,
+        strict,
+        __cancelled__: __genPasswordPrefs__,
+      } = await prompts(genPasswordPrefsQ);
+
+      if (__genPasswordPrefs__) throw new Error("ABORT");
+
       warning.rememberMasterKey();
       const {
         prefsMasterKey,
@@ -60,6 +73,14 @@ module.exports = async ({ defaults }) => {
         secretViewMode,
         secretSetType,
         copyToClipboard,
+        length,
+        numbers,
+        symbols,
+        lowercase,
+        uppercase,
+        excludeSimilarCharacters,
+        exclude,
+        strict,
       });
     }
 

@@ -20,6 +20,7 @@
     "commander": "^5.0.0",
     "conf": "^6.2.3",
     "cryptr": "^6.0.2",
+    "generate-password": "^1.5.1",
     "prompts": "^2.3.2",
     "signale": "^1.4.0"
   }

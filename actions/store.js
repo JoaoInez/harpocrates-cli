@@ -10,14 +10,17 @@ const auth = require("../utils/auth");
 const { success } = require("../utils/signales");
 
 exports.backup = auth(
-  async (masterKey, filename, folderPath, { decrypted, encryptionKey }) => {
-    const secrets = getAllSecrets(masterKey);
+  async (masterKey, folderPath, filename, { decrypted, encryptionKey }) => {
+    const secrets = getAllSecrets(masterKey).secrets;
+
     const data = decrypted
       ? JSON.stringify(secrets)
       : encrypt(JSON.stringify(secrets))(encryptionKey || masterKey);
 
     writeFileSync(
-      `${folderPath}/${filename}.${!decrypted ? "txt" : "json"}`,
+      `${folderPath}/${filename || "harpocrates_backup"}.${
+        !decrypted ? "txt" : "json"
+      }`,
       data
     );
 
@@ -36,16 +39,13 @@ exports.importStore = auth(
       ? JSON.parse(data)
       : JSON.parse(decrypt(data)(encryptionKey || masterKey));
 
-    if (!secrets.hasOwnProperty("secrets"))
-      throw new Error("FILE_INCOMPATIBLE");
-
     if (!replace) {
-      Object.entries(secrets.secrets).forEach(([key, value]) => {
+      Object.entries(secrets).forEach(([key, value]) => {
         if (!override) {
           if (!hasSecret(key)(masterKey)) setSecret(key, value)(masterKey);
         } else setSecret(key, value)(masterKey);
       });
-    } else setConf(masterKey, secrets);
+    } else setConf(masterKey, { secrets: secrets });
 
     success.secretsBackedUp();
   }

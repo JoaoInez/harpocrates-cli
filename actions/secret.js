@@ -1,4 +1,5 @@
 const clipboardy = require("clipboardy");
+const generator = require("generate-password");
 const {
   setSecret,
   getSecret,
@@ -6,7 +7,10 @@ const {
   getAllSecrets,
   hasSecret,
 } = require("../lib/secretsManager");
-const { getSecretViewPrefs } = require("../lib/prefsManager");
+const {
+  getSecretViewPrefs,
+  getGenPasswordPrefs,
+} = require("../lib/prefsManager");
 const auth = require("../utils/auth");
 const prompts = require("../utils/prompts");
 const {
@@ -22,9 +26,9 @@ const {
 } = require("../utils/questions");
 const { warning, success } = require("../utils/signales");
 
-// TODO: combine prompts to avoid unnecessary ifs
+exports.set = auth(async (masterKey, name, secret, { search, genPassword }) => {
+  const { copyToClipboard } = getSecretViewPrefs();
 
-exports.set = auth(async (masterKey, name, secret, { search }) => {
   const { name: _name, __cancelled__: __name__ } = name
     ? { name }
     : search
@@ -36,13 +40,20 @@ exports.set = auth(async (masterKey, name, secret, { search }) => {
 
   const { secret: _secret, __cancelled__: __secret__ } = secret
     ? { secret }
+    : genPassword
+    ? { secret: generator.generate(getGenPasswordPrefs()) }
     : await prompts(setSecretQ);
 
   if (__secret__) throw new Error("ABORT");
 
   setSecret(_name, _secret)(masterKey);
 
+  if (genPassword) success.showGeneratedPassword(_secret);
   success.secretSet();
+  if (copyToClipboard) {
+    clipboardy.writeSync(_secret);
+    success.secretCopiedToClipboard();
+  }
 });
 
 exports.get = auth(async (masterKey, name, { multiple }) => {
@@ -57,9 +68,12 @@ exports.get = auth(async (masterKey, name, { multiple }) => {
     if (!secret) throw new Error("NO_SECRET_FOUND");
     if (secretViewMode === "none" && !copyToClipboard)
       warning.cannotViewSecret();
-    if (copyToClipboard) clipboardy.writeSync(secret);
     if (secretViewMode === "visible") success.showSecret(secret);
     if (secretViewMode === "invisible") success.showSecret(secret, true);
+    if (copyToClipboard) {
+      clipboardy.writeSync(secret);
+      success.secretCopiedToClipboard();
+    }
   } else {
     const { secrets, __cancelled__ } = await prompts(
       getMultipleSecretsAutocompleteQ(masterKey)

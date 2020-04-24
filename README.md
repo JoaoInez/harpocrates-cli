@@ -2,7 +2,7 @@
 
 The harpocrates-cli is a command-line interface (CLI) tool to manage secrets (like passwords).
 
-![harpocrates-cli-screenshot](https://raw.githubusercontent.com/JoaoInez/brand/master/harpocrates-cli/harpocrates-cli-screenshot.png)
+![harpocrates-cli-screenshot](https://raw.githubusercontent.com/JoaoInez/personal-website/master/src/images/harpocrates-cli.png)
 
 ## Getting Started
 

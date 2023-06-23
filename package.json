@@ -20,9 +20,9 @@
   "license": "ISC",
   "dependencies": {
     "chalk": "^4.0.0",
-    "clipboardy": "^2.3.0",
+    "clipboardy": "^3.0.0",
     "commander": "^5.0.0",
-    "conf": "^6.2.3",
+    "conf": "^11.0.1",
     "cryptr": "^6.0.2",
     "generate-password": "^1.5.1",
     "prompts": "^2.3.2",
